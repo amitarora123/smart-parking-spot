@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.qpa.entity.UserInfo;
 import com.qpa.entity.Vehicle;
+import com.qpa.exception.CustomException;
 import com.qpa.repository.UserRepository;
 import com.qpa.repository.VehicleRepository;
 
@@ -22,7 +23,11 @@ public class UserService {
 
     // Add User
     public UserInfo addUser(UserInfo user) {
-        return userRepository.save(user);
+        try {
+            return userRepository.save(user);
+        } catch (Exception e) {
+            throw new CustomException("User already exists with email or phoneNumber: ", 400);
+        }
     }
 
     // Add Vehicle to User
@@ -33,17 +38,30 @@ public class UserService {
             vehicle.setUser(user);
             return vehicleRepository.save(vehicle);
         } else {
-            throw new RuntimeException("User not found with ID: " + userId);
+            throw new CustomException("User not found with ID: " + userId, 400);
         }
     }
 
     // View User by ID
     public UserInfo getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + id));
+                .orElseThrow(() -> new CustomException("User not found with ID: " + id, 400));
     }
 
     public List<UserInfo> getAllUser(){
         return userRepository.findAll();
+    }
+
+    public UserInfo updateUser(Long id, UserInfo user) {
+        UserInfo existingUser = userRepository.findById(id)
+                .orElseThrow(() -> new CustomException("User not found with ID: " + id, 400));
+       try {
+        existingUser.setName(user.getName());
+        existingUser.setEmail(user.getEmail());
+        existingUser.setPhoneNumber(user.getPhoneNumber());
+        return userRepository.save(existingUser);
+       } catch (Exception e) {
+              throw new CustomException("User already exists with email or phoneNumber: ", 400);
+       }
     }
 }
