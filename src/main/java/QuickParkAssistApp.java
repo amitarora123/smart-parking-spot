@@ -10,10 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @ComponentScan("com.qpa.*")
 @EntityScan("com.qpa.entity")
 @EnableJpaRepositories("com.qpa.repository")
-public class ParkingSpotMangagementApplication {
+public class QuickParkAssistApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ParkingSpotMangagementApplication.class, args);
+		SpringApplication.run(QuickParkAssistApp.class, args);
 	}
 
 }
