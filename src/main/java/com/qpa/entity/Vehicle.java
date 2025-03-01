@@ -1,10 +1,14 @@
 package com.qpa.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -12,47 +16,49 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
+
 @Entity
 public class Vehicle {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long vehicleId;
 
     @Column(unique = true, nullable = false)
-    private String vehicleNumber;
+    private String registrationNumber;
 
-    private String model;
-    private String manufacturer;
+    @Enumerated(EnumType.STRING)
+    private VehicleType vehicleType;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonIgnoreProperties("vehicles")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "emailId", "password", "firstName", "lastName", "userType", "address", "contactNumber"})
     private UserInfo user;
 
     // Constructors
     public Vehicle() {}
 
-    public Vehicle(String vehicleNumber, String model, String manufacturer, UserInfo user) {
-        this.vehicleNumber = vehicleNumber;
-        this.model = model;
-        this.manufacturer = manufacturer;
+    public Vehicle(String registrationNumber, VehicleType vehicleType, UserInfo user) {
+        this.registrationNumber = registrationNumber;
+        this.vehicleType = vehicleType;
         this.user = user;
     }
 
     // Getters and Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getVehicleId() { return vehicleId; }
+    public void setVehicleId(Long vehicleId) { this.vehicleId = vehicleId; }
 
-    public String getVehicleNumber() { return vehicleNumber; }
-    public void setVehicleNumber(String vehicleNumber) { this.vehicleNumber = vehicleNumber; }
-
-    public String getModel() { return model; }
-    public void setModel(String model) { this.model = model; }
-
-    public String getManufacturer() { return manufacturer; }
-    public void setManufacturer(String manufacturer) { this.manufacturer = manufacturer; }
+    public String getRegistrationNumber() { return registrationNumber; }
+    public void setRegistrationNumber(String registrationNumber) { this.registrationNumber = registrationNumber; }
 
     public UserInfo getUser() { return user; }
     public void setUser(UserInfo user) { this.user = user; }
+
+    public VehicleType getVehicleType() {
+        return vehicleType;
+    }
+
+    public void setVehicleType(VehicleType vehicleType) {
+        this.vehicleType = vehicleType;
+    }
 }

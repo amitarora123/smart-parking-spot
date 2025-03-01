@@ -1,4 +1,4 @@
-package com.example.parking_spot_mangagement;
+
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootApplication
-@ComponentScan("com.qpa.controller, com.qpa.service, com.qpa.repository, com.qpa.exception")
+@ComponentScan("com.qpa.*")
 @EntityScan("com.qpa.entity")
 @EnableJpaRepositories("com.qpa.repository")
 public class ParkingSpotMangagementApplication {

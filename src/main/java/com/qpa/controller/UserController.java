@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qpa.entity.UserInfo;
-import com.qpa.entity.Vehicle;
 import com.qpa.service.UserService;
 
 
@@ -29,19 +28,17 @@ public class UserController {
     // Add User
     @PostMapping("/add")
     public UserInfo addUser(@RequestBody UserInfo user) {
+        System.out.println("inside the addUser controller");
         return userService.addUser(user);
     }
 
     // Add Vehicle to a User
-    @PostMapping("/{userId}/addVehicle")
-    public Vehicle addVehicle(@PathVariable Long userId, @RequestBody Vehicle vehicle) {
-        return userService.addVehicle(userId, vehicle);
-    }
+    
 
     // Get User by ID
     @GetMapping("/{id}")
-    public UserInfo getUserById(@PathVariable Long id) {
-        return userService.getUserById(id);
+    public UserInfo getUserById(@PathVariable Long userId) {
+        return userService.getUserById(userId);
     }
 
     @GetMapping("/viewAll")

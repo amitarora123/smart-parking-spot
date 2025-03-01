@@ -1,44 +1,33 @@
 package com.qpa.service;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.qpa.entity.UserInfo;
-import com.qpa.entity.Vehicle;
 import com.qpa.exception.CustomException;
 import com.qpa.repository.UserRepository;
-import com.qpa.repository.VehicleRepository;
 
 @Service
 public class UserService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private VehicleRepository vehicleRepository;
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder){
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     // Add User
     public UserInfo addUser(UserInfo user) {
         try {
+            // Hash the password before saving the user
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
             return userRepository.save(user);
         } catch (Exception e) {
-            throw new CustomException("User already exists with email or phoneNumber: ", 400);
-        }
-    }
-
-    // Add Vehicle to User
-    public Vehicle addVehicle(Long userId, Vehicle vehicle) {
-        Optional<UserInfo> userOptional = userRepository.findById(userId);
-        if (userOptional.isPresent()) {
-            UserInfo user = userOptional.get();
-            vehicle.setUser(user);
-            return vehicleRepository.save(vehicle);
-        } else {
-            throw new CustomException("User not found with ID: " + userId, 400);
+            throw new CustomException("User already exists with email or phoneNumber.", 400);
         }
     }
 
@@ -48,20 +37,37 @@ public class UserService {
                 .orElseThrow(() -> new CustomException("User not found with ID: " + id, 400));
     }
 
-    public List<UserInfo> getAllUser(){
+    // Get All Users
+    public List<UserInfo> getAllUser() {
         return userRepository.findAll();
     }
 
+    // Update User
     public UserInfo updateUser(Long id, UserInfo user) {
         UserInfo existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new CustomException("User not found with ID: " + id, 400));
-       try {
-        existingUser.setName(user.getName());
-        existingUser.setEmail(user.getEmail());
-        existingUser.setPhoneNumber(user.getPhoneNumber());
-        return userRepository.save(existingUser);
-       } catch (Exception e) {
-              throw new CustomException("User already exists with email or phoneNumber: ", 400);
-       }
+    
+        try {
+            if (user.getFirstName() != null && !user.getFirstName().isEmpty()) {
+                existingUser.setFirstName(user.getFirstName());
+            }
+            if (user.getLastName() != null && !user.getLastName().isEmpty()) {
+                existingUser.setLastName(user.getLastName());
+            }
+            if (user.getEmailId() != null && !user.getEmailId().isEmpty()) {
+                existingUser.setEmailId(user.getEmailId());
+            }
+            if (user.getContactNumber() != null && !user.getContactNumber().isEmpty()) {
+                existingUser.setContactNumber(user.getContactNumber());
+            }
+            if (user.getAddress() != null && !user.getAddress().isEmpty()) {
+                existingUser.setAddress(user.getAddress());
+            }
+    
+            return userRepository.save(existingUser);
+        } catch (Exception e) {
+            throw new CustomException("User already exists with email or phone number.", 400);
+        }
     }
+    
 }
